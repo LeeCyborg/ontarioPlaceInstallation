@@ -54,7 +54,7 @@ const int pinTempSensor = A0;     // Grove - Temperature Sensor connect to A0
 // Pin number to change read or write mode on the shield
 //
 #define RXEN_PIN                2
-
+#define lamps 5
 
 //
 // A little macro that takes a percentage and chnages it to 0-255
@@ -64,10 +64,11 @@ const int pinTempSensor = A0;     // Grove - Temperature Sensor connect to A0
 
 
 typedef enum DmxCh {
-  WHITE  = 0,
-  RED    = 1,
-  GREEN  = 2,
-  BLUE   = 3
+
+  RED    = 0,
+  GREEN  = 1,
+  BLUE   = 2,
+  WHITE  = 3
 
 } DmxCh;
 
@@ -101,19 +102,28 @@ void setup() {
 
 // the loop routine runs over and over again forever:
 void loop() {
-  if (analogRead(0) > 550) {
-    //supacold();
-    pwarm();
-  } else if (analogRead(0) < 550 && analogRead(0) > 400) {
-    kindaCold();
-  } else {
-    supacold();
-  }
+  //set_rgb_value(1, 255, 0, 0,0);
+  //set_rgb_value(2, 0, 255, 0,0);
+  //set_rgb_value(3, 0, 0, 255,0);
+  //set_rgb_value(4, 0, 0, 0,255);
+  // RunningLights(0xff, 0xff, 0x00, 100);
+  //iceTwinkle();
+  //simpleWave(0.03,5,10);
+  //dmx_master.setChannelValue(5, 255);
+
+  //  if (analogRead(0) > 550) {
+  //    //supacold();
+  //    pwarm();
+  //  } else if (analogRead(0) < 550 && analogRead(0) > 400) {
+  kindaCold();
+  //  } else {
+      //supacold();
+  //  }
 }
 
 
 void set_rgb_value(int lampNumber, int red, int green, int blue, int white) {
-  int channelNumber = lampNumber * 4;
+  int channelNumber = lampNumber * 10;
 
   // Set each of the colors
   dmx_master.setChannelValue(channelNumber + RED,   red  );
@@ -124,44 +134,48 @@ void set_rgb_value(int lampNumber, int red, int green, int blue, int white) {
 }
 
 void supacold() {
-  dmx_master.setChannelValue(4, 255);
 
   for (int i = 0; i < 255; i++) {
-    dmx_master.setChannelValue(2, i + random(50));
-    dmx_master.setChannelValue(3, tempSense());
+    for (int j = 0; j < lamps; j++) {
+      set_rgb_value(j, i+random(50), 0, 255, random(200));
+    }
     delay(10);
   }
   for (int i = 255; i > 0; i--) {
-    dmx_master.setChannelValue(2, i + random(50));
-    dmx_master.setChannelValue(3, tempSense());
+    for (int j = 0; j < lamps; j++) {
+      set_rgb_value(j, i+random(50), 0, 255, random(200));
+    }
     delay(10);
   }
+
 }
 void kindaCold() {
-  dmx_master.setChannelValue(3, 0);
-
   for (int i = 0; i < 255; i++) {
-    dmx_master.setChannelValue(2, i);
-    dmx_master.setChannelValue(4, 255);
-    delay(20);
+    for (int j = 0; j < lamps; j++) {
+      set_rgb_value(j, i, 0, 255, 0);
+    }
+    delay(10);
   }
   for (int i = 255; i > 0; i--) {
-    dmx_master.setChannelValue(2, i);
-    dmx_master.setChannelValue(4, 255);
-    delay(20);
+    for (int j = 0; j < lamps; j++) {
+      set_rgb_value(j, i, 0, 255, 0);
+    }
+    delay(10);
   }
 }
 void pwarm() {
   dmx_master.setChannelValue(4, 0);
 
   for (int i = 0; i < 255; i++) {
-    dmx_master.setChannelValue(2, i);
-    dmx_master.setChannelValue(3, 255);
+    for (int j = 0; j < lamps; j++) {
+      set_rgb_value(j, i, 255, 0, 0);
+    }
     delay(5);
   }
   for (int i = 255; i > 0; i--) {
-    dmx_master.setChannelValue(2, i);
-    dmx_master.setChannelValue(3, 255);
+    for (int j = 0; j < lamps; j++) {
+      set_rgb_value(j, i, 255, 0, 0);
+    }
     delay(5);
   }
 }
@@ -174,4 +188,40 @@ int tempSense() {
   float temperature = 1.0 / (log(R / R0) / B + 1 / 298.15) - 273.15; // convert to temperature via datasheet
   return int(map(analogRead(0), 200, 600, 0, 255));
 }
+
+void iceTwinkle() {
+  for (int i = 0; i < lamps; i++) {
+    set_rgb_value(i, 0, 0, 0, 50);
+  }
+  if (random(10) % 3 == 0) {
+    int which = random(lamps);
+    set_rgb_value(which, 0, 0, 0, 255);
+    delay(100);
+    set_rgb_value(which, 0, 0, 0, 50);
+  }
+
+}
+void RunningLights(byte red, byte green, byte blue, int WaveDelay) {
+  int Position = 0;
+
+  for (int j = 0; j < 5; j++)
+  {
+    Position++; // = 0; //Position + Rate;
+    for (int i = 0; i < 5; i++) {
+      // sine wave, 3 offset waves make a rainbow!
+      float level = sin(i + Position) * 127 + 128;
+      float levels = cos(i + Position) * 127 + 128;
+      //setPixel(i,level,0,0);
+      set_rgb_value(i, 50, 0, levels, 0);
+      //        //float level = sin(i+Position) * 127 + 128;
+      //        setPixel(i,((sin(i+Position) * 127 + 128)/255)*red,
+      //                   ((sin(i+Position) * 127 + 128)/255)*green,
+      //                   ((sin(i+Position) * 127 + 128)/255)*blue);
+    }
+
+    //showStrip();
+    delay(WaveDelay);
+  }
+}
+
 
