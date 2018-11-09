@@ -115,7 +115,8 @@ void loop() {
   //    //supacold();
   //    pwarm();
   //  } else if (analogRead(0) < 550 && analogRead(0) > 400) {
-  kindaCold();
+  //kindaCold();'
+  Fire(20,50,20);
   //  } else {
       //supacold();
   //  }
@@ -224,4 +225,52 @@ void RunningLights(byte red, byte green, byte blue, int WaveDelay) {
   }
 }
 
+
+void Fire(int Cooling, int Sparking, int SpeedDelay) {
+  static byte heat[lamps];
+  int cooldown;
+    for( int i = 0; i < lamps; i++) {
+    cooldown = random(0, ((Cooling * 10) / lamps) + 2);
+    
+    if(cooldown>heat[i]) {
+      heat[i]=0;
+    } else {
+      heat[i]=heat[i]-cooldown;
+    }
+  }
+  
+  for( int k= lamps - 1; k >= 2; k--) {
+    heat[k] = (heat[k - 1] + heat[k - 2] + heat[k - 2]) / 3;
+  }
+    
+  if( random(255) < Sparking ) {
+    int y = random(7);
+    heat[y] = heat[y] + random(160,255);
+    //heat[y] = random(160,255);
+  }
+
+  for( int j = 0; j < lamps; j++) {
+    setPixelHeatColor(j, heat[j] );
+  }
+
+  delay(60);
+}
+
+void setPixelHeatColor (int Pixel, byte temperature) {
+  byte t192 = round((temperature/255.0)*191);
+ 
+  byte heatramp = t192 & 0x3F; // 0..63
+  heatramp <<= 2; // scale up to 0..252
+ 
+  if( t192 > 0x80) {                     // hottest
+    set_rgb_value(Pixel, 255, 255, heatramp, 0);
+    //setPixel(Pixel, 255, 255, heatramp);
+  } else if( t192 > 0x40 ) {             // middle
+   set_rgb_value(Pixel, 255, heatramp, 0, 0);
+    //setPixel(Pixel, 255, heatramp, 0);
+  } else {                
+    set_rgb_value(Pixel, heatramp, 0, 0, 0);// coolest
+    //setPixel(Pixel, heatramp, 0, 0);
+  }
+}
 
