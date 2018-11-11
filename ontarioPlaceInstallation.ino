@@ -32,7 +32,7 @@
 //
 // The number of channels the master will control
 //
-#define DMX_MASTER_CHANNELS   50
+#define DMX_MASTER_CHANNELS   170
 const int B = 4275;               // B value of the thermistor
 const int R0 = 100000;            // R0 = 100k
 const int pinTempSensor = A0;     // Grove - Temperature Sensor connect to A0
@@ -54,7 +54,7 @@ const int pinTempSensor = A0;     // Grove - Temperature Sensor connect to A0
 // Pin number to change read or write mode on the shield
 //
 #define RXEN_PIN                2
-#define lamps 5
+#define lamps 17
 
 //
 // A little macro that takes a percentage and chnages it to 0-255
@@ -107,16 +107,16 @@ void loop() {
   //set_rgb_value(3, 0, 0, 255,0);
   //set_rgb_value(4, 0, 0, 0,255);
   // RunningLights(0xff, 0xff, 0x00, 100);
-  //iceTwinkle();
-  //simpleWave(0.03,5,10);
+//  iceTwinkle();
+///  simpleWave(0.03,5,10);
   //dmx_master.setChannelValue(5, 255);
 
   //  if (analogRead(0) > 550) {
   //    //supacold();
   //    pwarm();
   //  } else if (analogRead(0) < 550 && analogRead(0) > 400) {
-  //kindaCold();'
-  Fire(20,50,20);
+  //kindaCold();
+ Fire(20,50,20);
   //  } else {
       //supacold();
   //  }
@@ -263,13 +263,13 @@ void setPixelHeatColor (int Pixel, byte temperature) {
   heatramp <<= 2; // scale up to 0..252
  
   if( t192 > 0x80) {                     // hottest
-    set_rgb_value(Pixel, 255, 255, heatramp, 0);
+    set_rgb_value(Pixel, 255, heatramp, 0, 0);
     //setPixel(Pixel, 255, 255, heatramp);
   } else if( t192 > 0x40 ) {             // middle
-   set_rgb_value(Pixel, 255, heatramp, 0, 0);
+   set_rgb_value(Pixel, heatramp, 255, 0, 0);
     //setPixel(Pixel, 255, heatramp, 0);
   } else {                
-    set_rgb_value(Pixel, heatramp, 0, 0, 0);// coolest
+    set_rgb_value(Pixel, heatramp, 200, 200, 0);// coolest
     //setPixel(Pixel, heatramp, 0, 0);
   }
 }
