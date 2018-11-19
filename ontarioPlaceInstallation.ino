@@ -55,7 +55,7 @@ const int pinTempSensor = A0;     // Grove - Temperature Sensor connect to A0
 //
 #define RXEN_PIN                2
 #define lamps 17
-
+int modifier = 0;
 //
 // A little macro that takes a percentage and chnages it to 0-255
 //
@@ -110,13 +110,16 @@ void loop() {
 //  iceTwinkle();
 ///  simpleWave(0.03,5,10);
   //dmx_master.setChannelValue(5, 255);
-
+modifier++;
+if(modifier > 254){
+ modifier=0;
+}
   //  if (analogRead(0) > 550) {
   //    //supacold();
   //    pwarm();
   //  } else if (analogRead(0) < 550 && analogRead(0) > 400) {
   //kindaCold();
- Fire(20,50,20);
+ Fire(20,map(analogRead(0), 0, 300, 20, 250),20);
   //  } else {
       //supacold();
   //  }
@@ -253,7 +256,7 @@ void Fire(int Cooling, int Sparking, int SpeedDelay) {
     setPixelHeatColor(j, heat[j] );
   }
 
-  delay(60);
+  delay(SpeedDelay);
 }
 
 void setPixelHeatColor (int Pixel, byte temperature) {
@@ -266,10 +269,10 @@ void setPixelHeatColor (int Pixel, byte temperature) {
     set_rgb_value(Pixel, 255, heatramp, 0, 0);
     //setPixel(Pixel, 255, 255, heatramp);
   } else if( t192 > 0x40 ) {             // middle
-   set_rgb_value(Pixel, heatramp, 255, 0, 0);
+   set_rgb_value(Pixel, heatramp, 255, map(modifier, 0, 254, 254,0), 0);
     //setPixel(Pixel, 255, heatramp, 0);
   } else {                
-    set_rgb_value(Pixel, heatramp, 200, 200, 0);// coolest
+    set_rgb_value(Pixel, heatramp, 200, modifier, 0);// coolest
     //setPixel(Pixel, heatramp, 0, 0);
   }
 }
