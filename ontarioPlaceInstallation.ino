@@ -119,7 +119,7 @@ if(modifier > 254){
   //    pwarm();
   //  } else if (analogRead(0) < 550 && analogRead(0) > 400) {
   //kindaCold();
- Fire(20,map(analogRead(0), 0, 300, 20, 250),20);
+ Fire(map(analogRead(1), 230, 260, 20, 100),map(analogRead(0), 0, 500, 20, 250),20);
   //  } else {
       //supacold();
   //  }
@@ -269,10 +269,10 @@ void setPixelHeatColor (int Pixel, byte temperature) {
     set_rgb_value(Pixel, 255, heatramp, 0, 0);
     //setPixel(Pixel, 255, 255, heatramp);
   } else if( t192 > 0x40 ) {             // middle
-   set_rgb_value(Pixel, heatramp, 255, map(modifier, 0, 254, 254,0), 0);
+   set_rgb_value(Pixel, heatramp, 255, map(0, 0, 254, 254,0), 0);
     //setPixel(Pixel, 255, heatramp, 0);
   } else {                
-    set_rgb_value(Pixel, heatramp, 200, modifier, 0);// coolest
+    set_rgb_value(Pixel, heatramp, 200, 0, 0);// coolest
     //setPixel(Pixel, heatramp, 0, 0);
   }
 }
